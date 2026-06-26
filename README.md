@@ -32,6 +32,8 @@ cargo run -- smoke --suite cases/parser-smoke.jsonl
 cargo run -- eval --suite cases/agent-command-safety.jsonl
 ```
 
+CI runs the same formatting, build, unit-test, smoke, and eval gates on pushes and pull requests.
+
 Generate an HTML report:
 
 ```bash
@@ -131,6 +133,7 @@ Current suites:
 Current gates:
 
 ```text
+cargo test: 9 unit tests
 parser smoke: 24/24
 command eval: 101/101
 high-risk false allows: 0

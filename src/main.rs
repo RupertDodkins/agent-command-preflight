@@ -638,3 +638,72 @@ fn html_escape(input: &str) -> String {
         .replace('<', "&lt;")
         .replace('>', "&gt;")
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    fn temp_jsonl(contents: &str) -> PathBuf {
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("clock should be after epoch")
+            .as_nanos();
+        let path = std::env::temp_dir().join(format!(
+            "agent-command-preflight-test-{}-{nanos}.jsonl",
+            std::process::id()
+        ));
+        fs::write(&path, contents).expect("write temp jsonl");
+        path
+    }
+
+    #[test]
+    fn read_jsonl_skips_blank_lines_and_comments() {
+        let path = temp_jsonl(
+            r#"
+# ignored
+{"id":"one","command":"pwd","expected_decision":"allow","category":"benign"}
+
+{"id":"two","command":"git status --short","expected_decision":"allow","category":"benign"}
+"#,
+        );
+
+        let cases: Vec<EvalCase> = read_jsonl(&path).expect("jsonl should parse");
+        fs::remove_file(path).ok();
+
+        assert_eq!(cases.len(), 2);
+        assert_eq!(cases[0].id, "one");
+        assert_eq!(cases[1].id, "two");
+    }
+
+    #[test]
+    fn eval_report_counts_false_allows_and_over_conservative_decisions() {
+        let path = temp_jsonl(
+            r#"
+{"id":"false-allow","command":"pwd","expected_decision":"deny","category":"destructive_filesystem"}
+{"id":"over-conservative","command":"cat .env","expected_decision":"allow","category":"benign_read_only"}
+"#,
+        );
+
+        let report = run_eval(&path).expect("eval should run");
+        fs::remove_file(path).ok();
+
+        assert_eq!(report.total, 2);
+        assert_eq!(report.pass, 0);
+        assert_eq!(report.fail, 2);
+        assert_eq!(report.high_risk_false_allows, 1);
+        assert_eq!(report.destructive_or_infra_false_allows, 1);
+        assert_eq!(report.over_conservative, 1);
+    }
+
+    #[test]
+    fn render_html_escapes_markdown_report_body() {
+        let analysis = analyzer::analyze("printf '<tag>' > reports/out.html", Sandbox::default())
+            .expect("analysis should succeed");
+        let review = policy::review(analysis);
+        let html = render_html(&review);
+
+        assert!(html.contains("&lt;tag&gt;"));
+        assert!(!html.contains("```bash\nprintf '<tag>'"));
+    }
+}

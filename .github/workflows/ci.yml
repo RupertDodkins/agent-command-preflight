@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: Check formatting
+        run: cargo fmt --check
+
+      - name: Check build
+        run: cargo check
+
+      - name: Run unit tests
+        run: cargo test
+
+      - name: Run parser smoke suite
+        run: cargo run -- smoke --suite cases/parser-smoke.jsonl
+
+      - name: Run command safety eval
+        run: cargo run -- eval --suite cases/agent-command-safety.jsonl

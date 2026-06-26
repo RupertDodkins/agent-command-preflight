@@ -4,6 +4,20 @@ The eval suite is designed around high-risk false allows. A conservative `ask` c
 
 ## Suites
 
+### Unit Tests
+
+`cargo test` covers the core regression cases that should not depend on shelling out through the CLI:
+
+- parser/effect extraction for redirection escape, secret-to-network flow, and wrapper-flag execution,
+- policy decisions for read-only inspection, project-code execution, and critical source/sink flows,
+- JSONL parsing, eval accounting, and HTML escaping.
+
+Current result:
+
+```text
+9/9
+```
+
 ### Parser Smoke
 
 `cases/parser-smoke.jsonl` checks that the parser/normalizer exposes shell structure that changes meaning:
