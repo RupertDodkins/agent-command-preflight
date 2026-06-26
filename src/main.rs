@@ -82,7 +82,7 @@ fn main() -> Result<()> {
         Command::Smoke { suite } => {
             let report = run_smoke(&suite)?;
             print_json(&report)?;
-            if report.pass < 18 || report.fail > 2 {
+            if report.fail > 0 {
                 std::process::exit(1);
             }
         }
@@ -262,6 +262,8 @@ fn run_smoke(path: &PathBuf) -> Result<ParserSmokeResult> {
     })
 }
 
+// Smoke tests use broad feature names to verify that representative shell shapes
+// remain visible. This is test-harness extraction, not the policy decision path.
 fn observed_features(analysis: &Analysis) -> Vec<String> {
     let mut features = Vec::new();
     let lower = analysis.command.to_ascii_lowercase();

@@ -455,11 +455,11 @@ fn collect_command_effects(
             let path = likely_path_arg(&cmd.args);
             let outside = path
                 .as_deref()
-                .map(|p| !path_inside_write_roots(p, sandbox) || is_home_dotfile(p))
+                .map(|p| !path_inside_write_roots(p, sandbox) || is_home_sensitive_path(p))
                 .unwrap_or(false);
             let critical = path
                 .as_deref()
-                .map(|p| outside && (is_home_dotfile(p) || p.starts_with("../")))
+                .map(|p| outside && (is_home_sensitive_path(p) || p.starts_with("../")))
                 .unwrap_or(false);
             let low_risk_workspace_write = path
                 .as_deref()
@@ -632,8 +632,8 @@ fn collect_command_effects(
 
 fn collect_redirect_effects(command: &str, sandbox: &Sandbox, out: &mut Vec<Effect>) {
     for (op, target) in redirect_targets(command) {
-        let outside = !path_inside_write_roots(&target, sandbox) || is_home_dotfile(&target);
-        let critical = outside && (is_home_dotfile(&target) || target.starts_with("../"));
+        let outside = !path_inside_write_roots(&target, sandbox) || is_home_sensitive_path(&target);
+        let critical = outside && (is_home_sensitive_path(&target) || target.starts_with("../"));
         let mut e = effect(
             if outside {
                 EffectKind::WorkspaceEscape
@@ -1070,15 +1070,8 @@ fn path_is_broad_or_outside(path: Option<&str>, sandbox: &Sandbox) -> bool {
         || !path_inside_write_roots(path, sandbox)
 }
 
-fn is_home_dotfile(path: &str) -> bool {
-    path.starts_with("~/")
-        || path.starts_with("$HOME/")
-        || path.starts_with("${HOME}/")
-            && (path.contains(".zshrc")
-                || path.contains(".bashrc")
-                || path.contains(".profile")
-                || path.contains(".ssh/")
-                || path.contains(".config/"))
+fn is_home_sensitive_path(path: &str) -> bool {
+    path.starts_with("~/") || path.starts_with("$HOME/") || path.starts_with("${HOME}/")
 }
 
 fn path_inside_write_roots(path: &str, sandbox: &Sandbox) -> bool {
