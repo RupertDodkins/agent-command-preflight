@@ -137,7 +137,7 @@ fn decision_for_effect(
                     Decision::Deny,
                     "deny.critical_network_boundary".to_string(),
                     "Command performs high-risk network transfer or upload.".to_string(),
-                    Some("Use a local artifact or request explicit approval with the exact endpoint and data surface.".to_string()),
+                    Some("Use a local file or request explicit approval with the exact endpoint and data surface.".to_string()),
                 )
             } else if analysis.sandbox.network {
                 (
@@ -151,7 +151,7 @@ fn decision_for_effect(
                     Decision::Ask,
                     "ask.network_blocked_by_sandbox".to_string(),
                     "Command requires network access but the sandbox context says network is disabled.".to_string(),
-                    Some("Ask for approval or use checked-in/local artifacts.".to_string()),
+                    Some("Ask for approval or use checked-in/local files.".to_string()),
                 )
             }
         }
