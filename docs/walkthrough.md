@@ -157,10 +157,10 @@ Reports are meant to be skimmed by a human or consumed by a harness. They includ
 - policy evidence,
 - safer path when available.
 
-Examples are checked into `reports/`:
+Examples are checked into `reports/` as GitHub-readable Markdown and generated HTML:
 
-- `reports/git-status.html`
-- `reports/home-dotfile.html`
-- `reports/secret-exfil.html`
-- `reports/network-to-exec.html`
-- `reports/go-test-exec.html`
+- `reports/git-status.md`
+- `reports/home-dotfile.md`
+- `reports/secret-exfil.md`
+- `reports/network-to-exec.md`
+- `reports/go-test-exec.md`

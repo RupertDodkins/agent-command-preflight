@@ -94,7 +94,7 @@ Policy decisions are intentionally asymmetric:
 - false `deny` or `ask` is a product-cost problem,
 - false `allow` on secret exfiltration, destructive mutation, or downloaded-code execution is a trust problem.
 
-The roadmap gate is therefore zero high-risk false allows on the eval suite.
+The evaluation gate is therefore zero high-risk false allows on the eval suite.
 
 ## Why Not LLM-Only?
 
