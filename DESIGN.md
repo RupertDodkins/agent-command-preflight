@@ -126,10 +126,9 @@ A future probe mode should run in a disposable boundary and compare predicted vs
 
 ## Future Work
 
-- Replace remaining pragmatic extraction with deeper AST-field traversal.
-- Add a disposable temp-workspace probe.
+- Load policy from config, including workspace roots, network posture, write roots, trusted domains, and package-install posture.
+- Add a disposable temp-workspace probe that compares predicted effects with observed file changes.
 - Add Docker network-off probe mode where available.
-- Add policy file loading.
-- Add report screenshots for flagship examples.
-- Add red-team evals from new public bypass cases.
-- Optionally add an LLM reviewer for `ask` cases only.
+- Replace remaining pragmatic extraction with deeper AST-field traversal.
+- Expand red-team evals from real coding-agent command patterns.
+- Optionally add an LLM reviewer for `ask` cases only; keep deterministic evidence as the decision authority.

@@ -158,6 +158,15 @@ cargo run -- eval --suite cases/agent-command-safety.jsonl
 - [Evaluation](docs/evaluation.md): suite shape, gates, and how failures are counted.
 - [Design note](DESIGN.md): architecture, threat model, and implementation tradeoffs.
 
+## Future Work
+
+The current project focuses on static preflight evidence. Natural extensions are:
+
+- load policy from config, including workspace roots, network posture, and trusted domains,
+- add a disposable probe mode that compares predicted effects with observed temp-workspace changes,
+- deepen shell normalization where the implementation still uses pragmatic extraction,
+- expand red-team evals from real coding-agent command patterns.
+
 ## Scope
 
 This is static preflight analysis, not sandbox enforcement. Runtime aliases, symlinks, generated scripts, package lifecycle hooks, and external services can change what a command does at execution time. The engine focuses on producing structured evidence and conservative decisions before execution.
